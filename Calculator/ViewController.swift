@@ -13,6 +13,11 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var display: UILabel!  //display is a pointer to our label in the heap
     //this is an instance variable in our class
+    //UI Lable refers to the type of our variable
 
+    @IBAction func appendDigit(sender: UIButton) {
+        let digit =
+        //let is a declaration for a constant variable in Swift
+    }
 }
 
