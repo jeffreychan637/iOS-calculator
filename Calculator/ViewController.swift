@@ -14,6 +14,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var display: UILabel!  //display is a pointer to our label in the heap
     //this is an instance variable in our class
     //UI Lable refers to the type of our variable
+    //UILabel is an Optional and thus is automaticall initialized to nil.
+    //When the app is run, display is set very early for us and the explanation point is added so that display is always unwrapped for us - thus it's an "implicitly unwrapped Optional"
 
     var userTypingNumber: Bool = false
     //In Swift, when classes are initialized, all properties (instance variables) must have been initialized
@@ -35,5 +37,13 @@ class ViewController: UIViewController {
         //Swift converts everything in \() into a string and displays it
         
     }
+    
+    var operandStack: Array<Double> = Array<Double>()
+    
+    @IBAction func enter() {
+        userTypingNumber = false
+        
+    }
+    
 }
 
