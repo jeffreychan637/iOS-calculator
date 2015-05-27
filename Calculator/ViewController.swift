@@ -11,6 +11,8 @@ import UIKit
 class ViewController: UIViewController {
     //defining a class called ViewController inheriting from UIVIewController
     
+    @IBOutlet weak var display: UILabel!  //display is a pointer to our label in the heap
+    //this is an instance variable in our class
 
 }
 

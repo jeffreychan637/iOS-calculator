@@ -31,6 +31,9 @@
                             <constraint firstItem="VNX-hY-Tk0" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="dsW-Db-Ibc"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="display" destination="VNX-hY-Tk0" id="lqc-Fx-ggK"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
