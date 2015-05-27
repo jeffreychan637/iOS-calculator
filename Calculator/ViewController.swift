@@ -15,9 +15,25 @@ class ViewController: UIViewController {
     //this is an instance variable in our class
     //UI Lable refers to the type of our variable
 
+    var userTypingNumber: Bool = false
+    //In Swift, when classes are initialized, all properties (instance variables) must have been initialized
+    
     @IBAction func appendDigit(sender: UIButton) {
-        let digit =
+        let digit = sender.currentTitle!
         //let is a declaration for a constant variable in Swift
+        //don't have to declare type for digit - Swift is very good at inferring variable types
+        //currentTitle property has type Optional. Optionals have two states - they are either set or not set (nil). When they're set they are set to a variable of a specific type - in this case String.
+        //By adding the explanation point, we upwrap the value from the Optional object. If currentTitle was nil and we tried to get the value out of it, our app will crash.
+        if userTypingNumber {
+            display.text = display.text! + digit
+            //display.text is a Optional whose value is a string. We're setting it to a new string here.
+        } else {
+            display.text = digit
+            userTypingNumber = true
+        }
+        //println("digit = \(digit)")
+        //Swift converts everything in \() into a string and displays it
+        
     }
 }
 
