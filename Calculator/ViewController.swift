@@ -19,6 +19,7 @@ class ViewController: UIViewController {
 
     var userTypingNumber: Bool = false
     //In Swift, when classes are initialized, all properties (instance variables) must have been initialized
+    //var is true when user is in the middle of typing a number
     
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
@@ -38,12 +39,66 @@ class ViewController: UIViewController {
         
     }
     
-    var operandStack: Array<Double> = Array<Double>()
+    @IBAction func operate(sender: UIButton) {
+        let operation = sender.currentTitle!
+        if userTypingNumber {
+            enter()
+        }
+        
+        switch operation {
+            case "÷": //we're passing in a function here
+                performOperation( { (op1: Double, op2: Double) -> Double in //note keyword in
+                    return op2 / op1
+                } )
+        case "×": performOperation({ (op1, op2) in return op1 * op2})
+                //swift can do type interference - since it knows you're calling performOperation, it can infer the types for the function being passed in!
+        case "−": performOperation({ (op1, op2) in op2 - op1})
+                //swift knows that the function being passed in returns a double so since our function is one statement, we don't even need the return keyword
+        case "+": performOperation() { $0 + $1 }
+                //swift by default names the arguments $0, $1, etc. This means we don't need to refer to them as op1 and op2. This further means we can just remove the argument definitions altogether and just have the function contents.
+                //also since we're passing in a function as the LAST (and only in this case) argument into Perform operation, we can actually move it outside of the parentheses. If there were other args to performOperation, we can put them inside the parentheses.
+                //ACTUALLY, SINCE THERE ARE NO OTHER ARGS, WE CAN JUST GET RID OF THE PARENTHESES ALTOGETHER IF WE WANTED TO LEAVING performOperation { $0 + $1 }
+        case "√": performOperationSingle { sqrt($0) }
+            default: break
+        }
+        //All these switch statements mean the same things, but they get more and more simplified as we take advantage of features of Swift
+    }
+    
+    //operation is of type function that takes in two doubles as arguments and returns a double
+    func performOperation(operation: (Double, Double) -> Double) {
+        if operandStack.count >= 2 {
+            displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
+            enter()
+        }
+    }
+    
+    func performOperationSingle(operation: Double -> Double) {
+        if operandStack.count >= 1 {
+            displayValue = operation(operandStack.removeLast())
+            enter()
+        }
+    }
+    
+    var operandStack = Array<Double>()
+    //don't need to specify type since Swift can infer it - actually considered bad form to put the type - if it can be inferred, then let it be.
     
     @IBAction func enter() {
         userTypingNumber = false
-        
+        operandStack.append(displayValue)
+        println("Operandstack = \(operandStack)")
     }
+    
+    var displayValue: Double {
+        get {
+            return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+        }
+        set {
+            //set includes a magic variable called newValue that represents the value it's going to be set to
+            display.text = "\(newValue)"
+            userTypingNumber = false
+        }
+    }
+    //instead of setting displayValue to a specific value, we're calculating it each time with the get function.
     
 }
 
