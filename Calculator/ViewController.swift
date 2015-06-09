@@ -21,6 +21,8 @@ class ViewController: UIViewController {
     //In Swift, when classes are initialized, all properties (instance variables) must have been initialized
     //var is true when user is in the middle of typing a number
     
+    var displayHasDecimal: Bool = false
+    
     var brain = CalculatorBrain()
     
     @IBAction func appendDigit(sender: UIButton) {
@@ -29,12 +31,17 @@ class ViewController: UIViewController {
         //don't have to declare type for digit - Swift is very good at inferring variable types
         //currentTitle property has type Optional. Optionals have two states - they are either set or not set (nil). When they're set they are set to a variable of a specific type - in this case String.
         //By adding the explanation point, we upwrap the value from the Optional object. If currentTitle was nil and we tried to get the value out of it, our app will crash.
-        if userTypingNumber {
-            display.text = display.text! + digit
-            //display.text is a Optional whose value is a string. We're setting it to a new string here.
-        } else {
-            display.text = digit
-            userTypingNumber = true
+        if !displayHasDecimal {
+            if userTypingNumber {
+                display.text = display.text! + digit
+                //display.text is a Optional whose value is a string. We're setting it to a new string here.
+            } else {
+                display.text = digit
+                userTypingNumber = true
+            }
+            if digit == "." {
+                displayHasDecimal = true
+            }
         }
         //println("digit = \(digit)")
         //Swift converts everything in \() into a string and displays it
@@ -90,14 +97,32 @@ class ViewController: UIViewController {
 //    var operandStack = Array<Double>()
     //don't need to specify type since Swift can infer it - actually considered bad form to put the type - if it can be inferred, then let it be.
     
+    @IBAction func appendMathSymbol(sender: UIButton) {
+        if userTypingNumber {
+            enter()
+        }
+        if let result = brain.pushMathSymbolOperand(sender.currentTitle!) {
+            displayValue = result
+        } else {
+            displayValue = 0 //lame
+        }
+    }
+    
     @IBAction func enter() {
         userTypingNumber = false
+        displayHasDecimal = false
         if let result = brain.pushOperand(displayValue) {
             displayValue = result
         } else {
             displayValue = 0 //lame - want display value to be nil - would be better if display value was optional
         }
     }
+    
+    @IBAction func clear() {
+        brain = CalculatorBrain()
+        displayValue = 0
+    }
+    
     
     var displayValue: Double {
         get {

@@ -15,6 +15,7 @@ class CalculatorBrain {
     //This has nothing to do with inheritance - remember than enums don't have inheritance!
     private enum Op: Printable {
         case Operand(Double) //swift unlike other languages allows you to associate data types with cases - here, we're saying that Operand is of type Double
+        case Symbol(Double)
         case UnaryOperation(String, Double -> Double)
         case BinaryOperation(String, (Double, Double) -> Double)
         
@@ -23,6 +24,8 @@ class CalculatorBrain {
                 switch self {
                     case .Operand(let operand):
                         return "\(operand)"
+                    case .Symbol(let symbol):
+                        return "\(symbol)"
                     case .UnaryOperation(let symbol, _):
                         return symbol
                     case .BinaryOperation(let symbol, _):
@@ -36,6 +39,8 @@ class CalculatorBrain {
     private var opStack = [Op]() //same as Array<Op>() - shorthand is more preferred
     
     private var knownOps = Dictionary<String, Op>() //AKA [String : Op]()
+    
+    private var knownSyms = [String: Op]()
     
     //by default variables are public within your application
     //Can use keyword private to make things private within your class
@@ -51,6 +56,11 @@ class CalculatorBrain {
         knownOps["+"] = Op.BinaryOperation("+", +)
         knownOps["−"] = Op.BinaryOperation("−") { $1 - $0 } //can just put it outside parentheses
         knownOps["√"] = Op.UnaryOperation("√", sqrt)
+        knownOps["cos"] = Op.UnaryOperation("cos", cos)
+        knownOps["sin"] = Op.UnaryOperation("sin", sin)
+        
+        
+        knownSyms["π"] = Op.Symbol(M_PI)
     }
     
     private func evaluate(ops: [Op]) -> (result: Double?, remainingOps: [Op]) { //can name return values if you want to
@@ -68,6 +78,8 @@ class CalculatorBrain {
                 case .Operand(let operand): //adds the . because we're technically doing op.Operand
                 //the let statement basically says create a constant variable operand that equals the double in op
                     return (operand, remainingOps)
+                case .Symbol(let symbol):
+                    return (symbol, remainingOps)
                 case .UnaryOperation(_, let operation): //underbar in Swift basically means I don't care so we're ignoring the symbol in this case because we don't need it.
                     let operandEvaluation = evaluate(remainingOps)
                     if let operand = operandEvaluation.result {
@@ -97,6 +109,13 @@ class CalculatorBrain {
     
     func pushOperand(operand: Double) -> Double? {
         opStack.append(Op.Operand(operand))
+        return evalulate()
+    }
+    
+    func pushMathSymbolOperand(symbol: String) -> Double? {
+        if let value = knownSyms[symbol] {
+            opStack.append(value)
+        }
         return evalulate()
     }
     
